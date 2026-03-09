@@ -250,13 +250,13 @@ const keeper = {
 // ── 공 ── (아래서 위로 날아옴)
 let balls = [];
 
-function spawnBallInLane(lane) {
+function spawnBallInLane(lane, yOffset = 0) {
   const cfg       = DIFFICULTY[selectedDifficulty];
   const speedMult = 1 + Math.min(gameTime / 90, 0.4);
   balls.push({
     lane,
     x:        LANE_X[lane],
-    y:        BALL_SPAWN_Y,
+    y:        BALL_SPAWN_Y + yOffset,   // yOffset > 0 → 뒤에 출발 → 늦게 도착
     vy:       -cfg.ballSpeed * speedMult,
     size:     18,
     spin:     Math.random() * Math.PI * 2,
@@ -270,7 +270,8 @@ function trySpawnBalls() {
   spawnBallInLane(lane1);
   if (selectedDifficulty === 'hard' && Math.random() < 0.15) {
     const others = [0, 1, 2].filter(l => l !== lane1);
-    spawnBallInLane(others[Math.floor(Math.random() * 2)]);
+    // 두 번째 공은 60~100px 뒤에서 출발 → 0.2~0.3초 시차
+    spawnBallInLane(others[Math.floor(Math.random() * 2)], 60 + Math.random() * 40);
   }
 }
 
@@ -677,15 +678,22 @@ function saveLeaderboard(name, score, streak) {
   localStorage.setItem(LB_KEY, JSON.stringify(all.slice(0, 10)));
 }
 function getLeaderboard() { return JSON.parse(localStorage.getItem(LB_KEY) || '[]'); }
-function showLeaderboard(currentScore) {
+function showLeaderboard(currentScore, fromGameOver = false) {
   const scores = getLeaderboard();
   const rows = scores.length === 0
     ? '<tr><td colspan="3" style="text-align:center;color:#999;padding:20px">기록 없음</td></tr>'
     : scores.map((s, i) => `<tr class="${s.score === currentScore ? 'highlight' : ''}"><td>${['🥇','🥈','🥉'][i] || i+1}</td><td>${s.name}</td><td>${s.score}개 방어</td></tr>`).join('');
   const modal = document.createElement('div');
   modal.className = 'modal-overlay';
-  modal.innerHTML = `<div class="modal-box leaderboard-modal"><h2>🏆 랭킹</h2><table class="lb-table"><thead><tr><th>순위</th><th>이름</th><th>기록</th></tr></thead><tbody>${rows}</tbody></table><button class="btn-primary" onclick="this.closest('.modal-overlay').remove()">닫기</button></div>`;
+  modal.innerHTML = `<div class="modal-box leaderboard-modal"><h2>🏆 랭킹</h2><table class="lb-table"><thead><tr><th>순위</th><th>이름</th><th>기록</th></tr></thead><tbody>${rows}</tbody></table><button class="btn-primary" id="lbCloseBtn">닫기</button></div>`;
   document.body.appendChild(modal);
+  modal.querySelector('#lbCloseBtn').addEventListener('click', () => {
+    modal.remove();
+    // 게임오버에서 열었으면 닫을 때 게임오버 화면 다시 표시
+    if (fromGameOver) {
+      document.getElementById('gameOverScreen').classList.add('show');
+    }
+  });
 }
 
 function showSaveDialog(score, onDone) {
@@ -723,7 +731,21 @@ document.getElementById('shareBtn').addEventListener('click', async () => {
   if (navigator.clipboard) { await navigator.clipboard.writeText(text); showToast('클립보드에 복사됐어요! 😊'); }
 });
 document.getElementById('lbShowBtn').addEventListener('click', () => {
-  document.getElementById('gameOverScreen').classList.remove('show'); showLeaderboard(saved);
+  document.getElementById('gameOverScreen').classList.remove('show');
+  showLeaderboard(saved, true);   // true = 게임오버에서 열림 → 닫으면 게임오버 다시 표시
+});
+
+// 홈 버튼 (플레이 중 → 시작 화면으로)
+document.getElementById('hudHomeBtn').addEventListener('click', () => {
+  if (state === State.PLAYING) {
+    state = State.IDLE;
+    balls = [];
+    particles = [];
+    shakeTime = 0; flashAlpha = 0;
+    document.getElementById('controls').classList.remove('active');
+    document.getElementById('gameOverScreen').classList.remove('show');
+    document.getElementById('startScreen').style.display = '';
+  }
 });
 document.querySelectorAll('.diff-btn').forEach(btn => {
   btn.addEventListener('click', () => {
