@@ -735,18 +735,24 @@ document.getElementById('lbShowBtn').addEventListener('click', () => {
   showLeaderboard(saved, true);   // true = 게임오버에서 열림 → 닫으면 게임오버 다시 표시
 });
 
-// 홈 버튼 (플레이 중 → 시작 화면으로)
+// 홈으로 이동 공통 함수
+function goHome() {
+  state = State.IDLE;
+  balls = [];
+  particles = [];
+  shakeTime = 0; flashAlpha = 0;
+  document.getElementById('controls').classList.remove('active');
+  document.getElementById('gameOverScreen').classList.remove('show');
+  document.getElementById('startScreen').style.display = '';
+}
+
+// HUD 홈 버튼 (플레이 중)
 document.getElementById('hudHomeBtn').addEventListener('click', () => {
-  if (state === State.PLAYING) {
-    state = State.IDLE;
-    balls = [];
-    particles = [];
-    shakeTime = 0; flashAlpha = 0;
-    document.getElementById('controls').classList.remove('active');
-    document.getElementById('gameOverScreen').classList.remove('show');
-    document.getElementById('startScreen').style.display = '';
-  }
+  if (state === State.PLAYING || state === State.DEAD) goHome();
 });
+
+// 게임오버 화면 홈 버튼
+document.getElementById('goHomeBtn').addEventListener('click', goHome);
 document.querySelectorAll('.diff-btn').forEach(btn => {
   btn.addEventListener('click', () => {
     document.querySelectorAll('.diff-btn').forEach(b => b.classList.remove('selected'));

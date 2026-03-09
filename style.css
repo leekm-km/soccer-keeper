@@ -178,6 +178,10 @@ html, body {
   width: 100%; padding: 16px; border-radius: 14px; border: none;
   background: #27ae60; color: #fff; font-size: 17px; font-weight: 700; cursor: pointer;
 }
+.home-btn {
+  width: 100%; padding: 14px; border-radius: 14px; border: none;
+  background: #f5f5f5; color: #555; font-size: 15px; font-weight: 600; cursor: pointer;
+}
 .share-btn, .lb-show-btn {
   width: 100%; padding: 14px; border-radius: 14px; border: none;
   background: #f0f4ff; color: #3182f6; font-size: 15px; font-weight: 600; cursor: pointer;
