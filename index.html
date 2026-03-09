@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <title>⚽ 축구 공막기</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- 게임 캔버스 -->
+  <canvas id="gameCanvas"></canvas>
+
+  <!-- HUD -->
+  <div id="hud">
+    <div class="score-box">
+      <div class="label">막은 수</div>
+      <div class="value" id="savedCount">0</div>
+    </div>
+    <div class="score-box">
+      <div class="label">연속</div>
+      <div class="value" id="streakCount">0</div>
+      <div class="sub">🔥</div>
+    </div>
+    <div class="score-box">
+      <div class="label">실점</div>
+      <div class="value" id="goalCount">0</div>
+      <div class="sub">/ 3회</div>
+    </div>
+  </div>
+
+  <!-- 배너 광고 -->
+  <div id="bannerAd"></div>
+
+  <!-- 방향 컨트롤 (모바일) -->
+  <div id="controls">
+    <button class="ctrl-btn" id="btnLeft">◀</button>
+    <button class="ctrl-btn" id="btnJump" style="opacity:0.4;cursor:default">🧤</button>
+    <button class="ctrl-btn" id="btnRight">▶</button>
+  </div>
+
+  <!-- 시작 화면 -->
+  <div id="startScreen">
+    <div class="stadium-preview">🧤</div>
+    <h1>⚽ 축구 공막기</h1>
+    <p class="subtitle">날아오는 공을 막아라!</p>
+
+    <div class="difficulty-select">
+      <button class="diff-btn" data-diff="easy">🟢 쉬움</button>
+      <button class="diff-btn selected" data-diff="normal">🟡 보통</button>
+      <button class="diff-btn" data-diff="hard">🔴 어려움</button>
+    </div>
+
+    <button class="start-btn" id="startBtn">게임 시작</button>
+    <button class="lb-btn" id="lbBtn">🏆 랭킹 보기</button>
+
+    <div class="how-to-play">
+      ◀ ▶ 버튼 또는 방향키로 키퍼 이동<br>
+      화면 스와이프로도 조작 가능<br>
+      3골 허용 시 게임 오버!
+    </div>
+  </div>
+
+  <!-- 게임오버 -->
+  <div id="gameOverScreen">
+    <div class="gameover-box">
+      <h2>⚽ 게임 오버!</h2>
+      <div class="gameover-stats">
+        <div class="stat-card">
+          <div class="stat-label">방어</div>
+          <div class="stat-val" id="goSaved">0개</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">실점</div>
+          <div class="stat-val" id="goGoals" style="color:#e74c3c">0개</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">최고 연속</div>
+          <div class="stat-val" id="goStreak">0연속</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">역대 최고</div>
+          <div class="stat-val" id="goBest">0연속</div>
+        </div>
+      </div>
+      <div class="gameover-buttons">
+        <button class="revive-btn" id="reviveBtn">📺 광고 보고 부활하기</button>
+        <button class="retry-btn" id="retryBtn">🔄 다시 시작</button>
+        <button class="share-btn" id="shareBtn">📤 점수 공유하기</button>
+        <button class="lb-show-btn" id="lbShowBtn">🏆 랭킹 보기</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="game.js"></script>
+</body>
+</html>
