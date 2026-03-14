@@ -3,6 +3,12 @@
 // 3개 레인에서 날아오는 공을 ◀▶ 버튼으로 막아라!
 // ============================================
 
+function escapeHtml(str) {
+  return String(str)
+    .replace(/&/g, '&amp;').replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#039;');
+}
+
 const canvas = document.getElementById('gameCanvas');
 const ctx    = canvas.getContext('2d');
 
@@ -682,7 +688,7 @@ function showLeaderboard(currentScore, fromGameOver = false) {
   const scores = getLeaderboard();
   const rows = scores.length === 0
     ? '<tr><td colspan="3" style="text-align:center;color:#999;padding:20px">기록 없음</td></tr>'
-    : scores.map((s, i) => `<tr class="${s.score === currentScore ? 'highlight' : ''}"><td>${['🥇','🥈','🥉'][i] || i+1}</td><td>${s.name}</td><td>${s.score}개 방어</td></tr>`).join('');
+    : scores.map((s, i) => `<tr class="${s.score === currentScore ? 'highlight' : ''}"><td>${['🥇','🥈','🥉'][i] || i+1}</td><td>${escapeHtml(s.name)}</td><td>${s.score}개 방어</td></tr>`).join('');
   const modal = document.createElement('div');
   modal.className = 'modal-overlay';
   modal.innerHTML = `<div class="modal-box leaderboard-modal"><h2>🏆 랭킹</h2><table class="lb-table"><thead><tr><th>순위</th><th>이름</th><th>기록</th></tr></thead><tbody>${rows}</tbody></table><button class="btn-primary" id="lbCloseBtn">닫기</button></div>`;
