@@ -324,6 +324,7 @@ function startGame() {
   document.getElementById('gameOverScreen').classList.remove('show');
   document.getElementById('controls').classList.add('active');
   updateHUD();
+  sbLog('soccer-keeper', 'game_start', { difficulty: currentDiff });
 }
 
 // ── 공 업데이트 & 판정 ──
@@ -613,6 +614,7 @@ function updateHUD() {
 function showGameOver() {
   totalSaved += saved;
   localStorage.setItem('sk_total', totalSaved);
+  sbLog('soccer-keeper', 'game_end', { saved, goals, best_streak: bestStreak });
   const screen = document.getElementById('gameOverScreen');
   screen.classList.add('show');
   document.getElementById('goSaved').textContent  = `${saved}개`;
@@ -682,6 +684,7 @@ function saveLeaderboard(name, score, streak) {
   all.push({ name, score, streak, date: new Date().toLocaleDateString('ko-KR') });
   all.sort((a, b) => b.score - a.score);
   localStorage.setItem(LB_KEY, JSON.stringify(all.slice(0, 10)));
+  sbSaveSoccerRanking(name, score, streak);
 }
 function getLeaderboard() { return JSON.parse(localStorage.getItem(LB_KEY) || '[]'); }
 function showLeaderboard(currentScore, fromGameOver = false) {
@@ -781,5 +784,7 @@ if (vibToggle) {
 
 document.getElementById('bannerAd').innerHTML = `<div class="banner-ad"><span class="ad-badge">AD</span><span>배너 광고 영역 (실제 광고로 교체하세요)</span></div>`;
 
+sbInitUser();
+sbLog('soccer-keeper', 'app_open');
 lastTime = performance.now();
 animId   = requestAnimationFrame(loop);
